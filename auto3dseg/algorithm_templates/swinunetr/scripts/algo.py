@@ -260,7 +260,7 @@ class SwinunetrAlgo(BundleAlgo):
 
         mem = get_mem_from_visible_gpus()
         device_id = np.argmin(mem)
-        print(f"[info] device {device_id} in visible GPU list has the minimum memory.")
+        print(f"[debug] device {device_id} in visible GPU list has the minimum memory.")
 
         mem = min(mem) if isinstance(mem, list) else mem
         mem = round(float(mem) / 1024.0)

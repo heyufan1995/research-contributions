@@ -182,7 +182,7 @@ def run(config_file: Optional[Union[str, Sequence[str]]] = None, **override):
     CONFIG["handlers"]["file"]["filename"] = log_output_file
     logging.config.dictConfig(CONFIG)
 
-    logger.debug(f"[info] number of GPUs: {torch.cuda.device_count()}")
+    logger.debug(f"[debug] number of GPUs: {torch.cuda.device_count()}")
     if torch.cuda.device_count() > 1:
         logging.getLogger("torch.distributed.distributed_c10d").setLevel(
             logging.WARNING)
@@ -190,7 +190,7 @@ def run(config_file: Optional[Union[str, Sequence[str]]] = None, **override):
         world_size = dist.get_world_size()
     else:
         world_size = 1
-    logger.debug(f"[info] world_size: {world_size}")
+    logger.debug(f"[debug] world_size: {world_size}")
 
     datalist = ConfigParser.load_config_file(data_list_file_path)
 
@@ -310,7 +310,7 @@ def run(config_file: Optional[Union[str, Sequence[str]]] = None, **override):
             if "out" not in key:
                 store_dict[key].copy_(model_dict[key])
         model.load_state_dict(store_dict)
-        logger.debug("[info] use pretrained weights")
+        logger.debug("[debug] use pretrained weights")
 
 
     if torch.cuda.device_count() > 1:
@@ -344,7 +344,7 @@ def run(config_file: Optional[Union[str, Sequence[str]]] = None, **override):
     if finetune["activate"] and os.path.isfile(
             finetune["pretrained_ckpt_name"]):
         logger.debug(
-            "[info] fine-tuning pre-trained checkpoint {:s}".format(finetune["pretrained_ckpt_name"]))
+            "[debug] fine-tuning pre-trained checkpoint {:s}".format(finetune["pretrained_ckpt_name"]))
         if torch.cuda.device_count() > 1:
             model.module.load_state_dict(
                 torch.load(
@@ -356,14 +356,14 @@ def run(config_file: Optional[Union[str, Sequence[str]]] = None, **override):
                     finetune["pretrained_ckpt_name"],
                     map_location=device))
     else:
-        logger.debug("[info] training from scratch")
+        logger.debug("[debug] training from scratch")
 
     if amp:
         from torch.cuda.amp import GradScaler, autocast
 
         scaler = GradScaler()
         if torch.cuda.device_count() == 1 or dist.get_rank() == 0:
-            logger.debug("[info] amp enabled")
+            logger.debug("[debug] amp enabled")
 
     best_metric = -1
     best_metric_epoch = -1
@@ -479,7 +479,7 @@ def run(config_file: Optional[Union[str, Sequence[str]]] = None, **override):
                             "train/loss",
                             loss.item(),
                             epoch_len *
-                            num_rounds +
+                            _round +
                             step)
 
             lr_scheduler.step()
