@@ -104,6 +104,8 @@ class SwinunetrAlgo(BundleAlgo):
             batch_size = max(batch_size, 1)
             hyper_parameters.update({"num_patches_per_iter": batch_size})
             hyper_parameters.update({"num_patches_per_image": batch_size * 2})
+            hyper_parameters.update(
+                {"training#num_epochs": int(400.0 / float(batch_size))})
 
             intensity_upper_bound = float(
                 data_stats[
